@@ -1,0 +1,63 @@
+header{
+    margin-bottom: 1em;
+    padding: 0;
+}
+
+body{
+    font-family: sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.heading{
+    font-weight: bold;
+    text-align: center;
+    background-color: rgb(93, 244, 176);
+    padding: 1em;
+    margin: 0;
+}
+
+
+.form-class{
+    width: 30vw;
+    margin: auto;
+    padding: 2em;
+    border-radius: 1em;
+    border: 3px solid #4fb386;
+}
+
+.prompt{
+    color: rgb(247, 0, 0);
+    font-weight: bold;
+    text-align: center;
+}
+
+.form-input{
+    width: 100%;
+    padding: 0.3em;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+    border-radius: 5px;
+    border: 2px solid silver;
+}
+
+.form-input:focus{
+    outline: none;
+    border: 2px solid rgb(93, 244, 176);
+}
+
+.submitBtn{
+    margin-top: 0.3em;
+    padding: 0.3em;
+    width: 30%;
+    background-color: rgb(93, 244, 176);
+    border-radius: 6px;
+}
+.submitBtn:hover{
+    background-color: rgb(61, 158, 114);
+}
+
+.signUpInfo{
+    text-align: center;
+    font-weight: bold;
+}
