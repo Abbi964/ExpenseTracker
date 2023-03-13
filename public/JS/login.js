@@ -20,7 +20,9 @@ async function SubmitForm(e){
             // making a post request
             let response = await axios.post('http://localhost:3000/user/login',obj);
             // going to main page if we get a response
-            alert(response.data)
+            alert(response.data.msg)
+            // saving the json web token in local storage
+            localStorage.setItem('token',response.data.token)
             window.location.href = '/expense/main'
         }
         catch(err){

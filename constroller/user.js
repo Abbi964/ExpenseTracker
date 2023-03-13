@@ -2,6 +2,8 @@ const path  = require('path')
 
 const bcrypt = require('bcrypt')
 
+const jwt = require('jsonwebtoken')
+
 const User = require('../model/user')
 
 exports.getSignUpPage = (req,res,next)=>{
@@ -52,7 +54,7 @@ exports.postLoginPage = async(req,res,next)=>{
                     res.status(500).json({ msg: 'Internal server error' });
                 }
                 else if(same){
-                    res.json('Sucessfully loged in')
+                    res.json({msg:'logging in user',token:generateJWT(user.dataValues.id)})
                 }
                 else{
                     res.status(401).json({msg:'User not authorized'})
@@ -63,4 +65,9 @@ exports.postLoginPage = async(req,res,next)=>{
     catch(err){
         console.log(err)
     }
+}
+
+
+function generateJWT(id){
+    return jwt.sign({userId:id},'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
 }

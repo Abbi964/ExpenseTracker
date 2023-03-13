@@ -16,7 +16,13 @@ async function addExpense(e){
     }
     else{
         try{
-            let expenseInfo = {amount:amount.value, category:category.value, description:description.value};
+            // amking an obj of inputs and also token
+            let expenseInfo = {
+                amount:  amount.value, 
+                category: category.value, 
+                description:  description.value, 
+                token:  localStorage.getItem('token')
+            };
             // making a post request and returning id of expense
             let response = await axios.post('http://localhost:3000/expense/addexpense',expenseInfo);
             //Displaying expense in DOM
@@ -40,13 +46,16 @@ async function addExpense(e){
 //-----modifying expenses using del and edit button---//
 expenseList.addEventListener('click',modifyExpense);
 
-function modifyExpense(e){
+async function modifyExpense(e){
     //when del button is clicked
     if(e.target.className==='delBtn'){
         try{
             // deleting expense from database
             let li_id = e.target.parentElement.id;
-            axios.delete(`http://localhost:3000/expense/delete/${li_id}`)
+            let token = localStorage.getItem('token')
+            await axios.delete(`http://localhost:3000/expense/delete/${li_id}`,{
+                headers:{'Authorization':token}
+            })
             // deleting from DOM
             let li = document.getElementById(li_id)
             li.remove()
@@ -62,8 +71,9 @@ window.addEventListener('DOMContentLoaded',loadExpenses)
 
 async function loadExpenses(e){
     try{
-        // getting all expenses from database
-        let response = await axios.get('http://localhost:3000/expense/all_expenses')
+        // getting all expenses from database of user logged(using JWT)
+        let token = localStorage.getItem('token')
+        let response = await axios.get('http://localhost:3000/expense/all_expenses',{ headers:{ 'Authorization': token }})
         let expensesArray = response.data
         expensesArray.forEach((exp)=>{
             //making an list item

@@ -10,6 +10,9 @@ const sequelize = require('./util/database')
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense')
 
+const User = require('./model/user');
+const Expense = require('./model/expense');
+
 // making public static
 app.use(express.static(path.join(__dirname,'public')));
 // adding body parser
@@ -22,6 +25,10 @@ app.get('/',(req,res,next)=>{
 
 app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
+
+// defining relation between user and expense
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
 sequelize.sync();
 
