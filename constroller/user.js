@@ -43,15 +43,19 @@ exports.postLoginPage = async(req,res,next)=>{
         let user = await User.findOne({where:{email:email}});
         // checking if user email exists in DB or not
         if(user===null){
-            res.json('Eror 404 User not found')
+            res.status(404).json({msg:'User not found'})
         }
         else{
             bcrypt.compare(password,user.dataValues.password,(err,same)=>{
-                if(same===true){
-                    res.json('User login sucessful')
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({ msg: 'Internal server error' });
+                }
+                else if(same){
+                    res.json('Sucessfully loged in')
                 }
                 else{
-                    res.json('Eror 401 User not authorized')
+                    res.status(401).json({msg:'User not authorized'})
                 }
             })
         }

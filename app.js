@@ -7,7 +7,8 @@ const app = express();
 
 const sequelize = require('./util/database')
 
-const userRoutes = require('./routes/user')
+const userRoutes = require('./routes/user');
+const expenseRoutes = require('./routes/expense')
 
 // making public static
 app.use(express.static(path.join(__dirname,'public')));
@@ -20,6 +21,7 @@ app.get('/',(req,res,next)=>{
 })
 
 app.use('/user',userRoutes);
+app.use('/expense',expenseRoutes);
 
 sequelize.sync();
 

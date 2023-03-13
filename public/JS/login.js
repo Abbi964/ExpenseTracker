@@ -19,11 +19,13 @@ async function SubmitForm(e){
             let obj = {email:emailInput.value, password:passwordInput.value};
             // making a post request
             let response = await axios.post('http://localhost:3000/user/login',obj);
-            // showing response on DOM
-            loginInfo.innerHTML = `<p>${response.data}</p>`
+            // going to main page if we get a response
+            alert(response.data)
+            window.location.href = '/expense/main'
         }
         catch(err){
-            console.log(err)
+            // showing errs on DOM
+            loginInfo.innerHTML = `<p>${err.response.data.msg}</p>`
         }
     }
 }
