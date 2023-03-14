@@ -5,6 +5,8 @@ const form = document.querySelector('.form-class')
 const expenseList = document.querySelector('.expenseList')
 const prompt = document.querySelector('.prompt')
 
+let premium = false;
+
 
 form.addEventListener('submit',addExpense);
 
@@ -69,7 +71,13 @@ async function activatePremium(e){
             // and also showing on DOM
             alert('You are a Premium User Now')
             //removing the buy Premium button and replace it something else
-            changeBuyPremium(); 
+            changeBuyPremium();
+            // changing isPremium = true in JWT stored in local storage 
+            let res = await axios.get('http://localhost:3000/user/makePremiumInLocalStorage',{
+                headers:{'Authorization': token}
+            })
+            let newToken = res.data.token
+            localStorage.setItem('token',newToken)
         }
     } 
     //before making new Razorpay obj we have to attach razorpay script
@@ -118,7 +126,7 @@ window.addEventListener('DOMContentLoaded',loadExpenses)
 async function loadExpenses(e){
     try{
         // first checking if premium user and if is changing DOM accordingly
-        cheackPremiumUser();
+        checkingAndapplyingPremium()
         // getting all expenses from database of user logged(using JWT)
         let token = localStorage.getItem('token')
         let response = await axios.get('http://localhost:3000/expense/all_expenses',{ headers:{ 'Authorization': token }})
@@ -140,7 +148,6 @@ async function loadExpenses(e){
         console.log(err)
     }
 }
-
 
 
 function makeLi(id,amount,category,description){
@@ -166,21 +173,54 @@ function makeEditBtn(){
 }
 
 function changeBuyPremium(){
+    // making variable 'premium' = true
+    premium = true;
+    // removing buy premium button
     let btn = document.querySelector('.buyPremium')
     btn.remove()
+    // adding a 'Premum User' tag
     let btnDiv = document.querySelector('.buyPremiumDiv');
     let newMsg = document.createElement('p')
     newMsg.innerText = 'Premium User'
     newMsg.className = 'premiumUser'
     btnDiv.appendChild(newMsg)
+    // adding a show loaderboard button
+    let leaderboardBtn = document.createElement('button');
+    leaderboardBtn.innerText = 'Show Leaderboard';
+    leaderboardBtn.className = 'leaderboardBtnClass';
+    leaderboardBtn.addEventListener('click',showLeaderboard);
+    btnDiv.appendChild(leaderboardBtn);
+
 }
 
-async function cheackPremiumUser(){
+async function checkingAndapplyingPremium(){
     let token = localStorage.getItem('token')
-    let result =  await axios.get('http://localhost:3000/user/ispremium',{headers:{
+    let result = await axios.get('http://localhost:3000/user/ispremium',{headers:{
         'Authorization':token
     }})
-    if(result.data.isPremium){
-        changeBuyPremium()
+    if(result.data.isPremiumUser){
+        changeBuyPremium();
     }
+}
+
+//-----showing leaderboard when pressing leaderboard button---//
+
+async function showLeaderboard(e){
+    const leaderboardUl = document.querySelector('#leaderboard')
+    leaderboardUl.className = 'leaderboard'
+    let response = await axios.get('http://localhost:3000/premium/getLeaderboard')
+    let leaderboardArray = response.data.leaderboardArray
+    // showing leaderboardArray on DOM
+    leaderboardUl.innerHTML = '<h2>LeaderBoard :</h2>'
+    leaderboardArray.forEach((entry)=>{
+        let li = makeLeaderboardLi(entry.name , entry.expenses)
+        leaderboardUl.appendChild(li)
+    })
+}
+
+function makeLeaderboardLi(name,totalExpense){
+    let li = document.createElement('li');
+    li.className = 'leaderboardLi'
+    li.innerText = `User - ${name} ,  Total Expenses - Rs${totalExpense}`
+    return li
 }

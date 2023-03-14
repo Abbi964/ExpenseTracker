@@ -1,5 +1,4 @@
 const userController = require('../constroller/user')
-const userAuthentication = require('../middleware/auth')
 
 const express = require('express');
 
@@ -13,6 +12,8 @@ router.get('/login',userController.getLoginPage);
 
 router.post('/login',userController.postLoginPage);
 
-router.get('/ispremium',userAuthentication.authenticate,userController.isPremium);
+router.get('/ispremium',userController.isPremium);
+
+router.get('/makePremiumInLocalStorage',userController.makePremiumInLocalStorage)
 
 module.exports  = router

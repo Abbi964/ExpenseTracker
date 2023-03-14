@@ -54,7 +54,7 @@ exports.postLoginPage = async(req,res,next)=>{
                     res.status(500).json({ msg: 'Internal server error' });
                 }
                 else if(same){
-                    res.json({msg:'logging in user',token:generateJWT(user.dataValues.id)})
+                    res.json({msg:'logging in user',token:generateJWT(user.dataValues.id , user.dataValues.isPremiumUser)})
                 }
                 else{
                     res.status(401).json({msg:'User not authorized'})
@@ -69,14 +69,27 @@ exports.postLoginPage = async(req,res,next)=>{
 
 exports.isPremium = (req,res,next)=>{
     try{
-        res.json({isPremium:req.user.isPremiumUser})
+        let token = req.headers.authorization
+        let data = tokenToData(token)
+        res.json({isPremiumUser:data.isPremium}) 
     }
     catch(err){
         console.log(err)
     }
 }
 
+exports.makePremiumInLocalStorage = (req,res,next)=>{
+    const token = req.headers.authorization
+    let data = tokenToData(token);
+    let newToken =  generateJWT(data.userId,true)
+    res.json({token:newToken}) 
+}
 
-function generateJWT(id){
-    return jwt.sign({userId:id},'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
+
+function generateJWT(id,isPremiumUser){
+    return jwt.sign({userId:id , isPremium:isPremiumUser},'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
+}
+
+function tokenToData(token){
+    return jwt.verify(token,'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
 }

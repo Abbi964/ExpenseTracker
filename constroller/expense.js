@@ -9,7 +9,7 @@ exports.getExpenseTracker = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'..','views','expense.html'))
 }
 
-exports.addExpense = (req,res,next)=>{
+exports.addExpense = async(req,res,next)=>{
     try{
         const amount = req.body.amount;
         const category = req.body.category;
@@ -19,7 +19,7 @@ exports.addExpense = (req,res,next)=>{
         let data = tokenToData(token)
         let userId = data.userId 
         // adding info in expense table
-        let expense = Expense.create({
+        let expense = await Expense.create({
             amount:amount,
             category:category,
             description:description,

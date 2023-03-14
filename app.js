@@ -11,7 +11,8 @@ const sequelize = require('./util/database')
 
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
-const orderRoutes = require('./routes/order')
+const orderRoutes = require('./routes/order');
+const premiumRoutes = require('./routes/premium')
 
 const User = require('./model/user');
 const Expense = require('./model/expense');
@@ -30,6 +31,8 @@ app.get('/',(req,res,next)=>{
 app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/order',orderRoutes);
+app.use('/premium',premiumRoutes);
+
 
 // defining relation between user and expense
 User.hasMany(Expense);

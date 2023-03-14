@@ -85,6 +85,39 @@ body{
     border-radius: 12px;
     border: 1px solid rgb(48, 130, 93);
     text-align: center;
+    color: white;
+}
+
+.leaderboard{
+    list-style-type: none;
+    margin: auto;
+    width: 40%;
+    padding: 0.4em;
+    border: 2px solid rgb(60, 167, 142);
+    border-radius: 1em;
+    margin-top: 1em;
+    background-color: rgb(193, 240, 219);
+}
+
+.leaderboardBtnClass{
+    position: absolute;
+    top: 15em;
+    left: 7em;
+    width: 9em;
+    padding: 9px;
+    background-color: rgb(93, 244, 209);
+    border-radius: 12px;
+}
+.leaderboardBtnClass:hover{
+    background-color: aquamarine;
+}
+
+.leaderboardLi{
+    border: 2px solid rgb(73, 208, 148);
+    border-radius: 0.6em;
+    padding: 0.3em;
+    margin-top: 0.6em;
+    background-color: rgb(107, 249, 185);;
 }
 
 .expenseList{
