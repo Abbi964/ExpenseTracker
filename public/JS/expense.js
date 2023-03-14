@@ -36,11 +36,57 @@ async function addExpense(e){
             li.appendChild(editBtn)
             //appending li to ul
             expenseList.appendChild(li);
+
+            // crearing the inputs
+            amount.value = ''
+            description.value = ''
         }
         catch(err){
             console.log(err)
         }
     }
+}
+
+//-----activating premium with buy premium button----//
+const buyPremium = document.querySelector('.buyPremium');
+buyPremium.addEventListener('click',activatePremium);
+
+async function activatePremium(e){
+    let token = localStorage.getItem('token')
+    let response = await axios.get('http://localhost:3000/order/purchasePremium',{headers:{'Authorization':token}})
+    // making an object to pass as option in new razorpay obj which will be made
+    let options = {
+        key:response.data.key_id,
+        order_id: response.data.order.id,
+        handler: async function(respo){
+            // handeler is CB fn which will be called by razorpay when payment will be successful
+            console.log(respo)
+            await axios.post('http://localhost:3000/order/updateTransectionStatus',{
+                order_id: options.order_id,
+                payment_id: respo.razorpay_payment_id,
+            },
+            {headers: {'Authorization': token}})
+            // and also showing on DOM
+            alert('You are a Premium User Now')
+            //removing the buy Premium button and replace it something else
+            changeBuyPremium(); 
+        }
+    } 
+    //before making new Razorpay obj we have to attach razorpay script
+    // so that we can acess Razorpay from frontend
+    const scrpt = document.createElement('script')
+    scrpt.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    document.querySelector('body').appendChild(scrpt)
+    // now making the new razorpay object
+    const rzp1 = new Razorpay(options);
+    rzp1.open();  // this will open razorpay front end
+
+    rzp1.on('payment.failed',(res)=>{
+        console.log(res)
+        alert('something went wrong')
+        // writing is info in database
+        axios.post('http://localhost:3000/order/transectionFalied',{order_id:options.order_id},{headers:{'Authorization': token}})
+    })
 }
 
 //-----modifying expenses using del and edit button---//
@@ -71,6 +117,8 @@ window.addEventListener('DOMContentLoaded',loadExpenses)
 
 async function loadExpenses(e){
     try{
+        // first checking if premium user and if is changing DOM accordingly
+        cheackPremiumUser();
         // getting all expenses from database of user logged(using JWT)
         let token = localStorage.getItem('token')
         let response = await axios.get('http://localhost:3000/expense/all_expenses',{ headers:{ 'Authorization': token }})
@@ -115,4 +163,24 @@ function makeEditBtn(){
     editBtn.className = 'editBtn'
     editBtn.innerText = 'Edit'
     return editBtn
+}
+
+function changeBuyPremium(){
+    let btn = document.querySelector('.buyPremium')
+    btn.remove()
+    let btnDiv = document.querySelector('.buyPremiumDiv');
+    let newMsg = document.createElement('p')
+    newMsg.innerText = 'Premium User'
+    newMsg.className = 'premiumUser'
+    btnDiv.appendChild(newMsg)
+}
+
+async function cheackPremiumUser(){
+    let token = localStorage.getItem('token')
+    let result =  await axios.get('http://localhost:3000/user/ispremium',{headers:{
+        'Authorization':token
+    }})
+    if(result.data.isPremium){
+        changeBuyPremium()
+    }
 }

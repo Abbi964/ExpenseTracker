@@ -67,6 +67,15 @@ exports.postLoginPage = async(req,res,next)=>{
     }
 }
 
+exports.isPremium = (req,res,next)=>{
+    try{
+        res.json({isPremium:req.user.isPremiumUser})
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 
 function generateJWT(id){
     return jwt.sign({userId:id},'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')

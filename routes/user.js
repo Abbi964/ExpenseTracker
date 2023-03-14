@@ -1,4 +1,5 @@
 const userController = require('../constroller/user')
+const userAuthentication = require('../middleware/auth')
 
 const express = require('express');
 
@@ -10,6 +11,8 @@ router.post('/signup',userController.postSignupPage);
 
 router.get('/login',userController.getLoginPage);
 
-router.post('/login',userController.postLoginPage)
+router.post('/login',userController.postLoginPage);
+
+router.get('/ispremium',userAuthentication.authenticate,userController.isPremium);
 
 module.exports  = router
