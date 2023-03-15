@@ -55,10 +55,12 @@ exports.deleteExpense = async(req,res,next)=>{
         let userId = data.userId
         // finding the expense to destroy
         let exp = await Expense.findByPk(expenseId)
+        // before deleting expense storing exp.amount so that can be substrated from total expense of user
+        let amount = exp.amount
         // checking if id of exp is same as id given in token and destroying exp
         if(userId==exp.UserId){
             exp.destroy();
-            res.json('expense deleted')
+            res.json({amount:amount})
         }
         else{
             res.status(401).json('not autharized to delete')

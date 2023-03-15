@@ -14,6 +14,8 @@ router.post('/login',userController.postLoginPage);
 
 router.get('/ispremium',userController.isPremium);
 
-router.get('/makePremiumInLocalStorage',userController.makePremiumInLocalStorage)
+router.get('/makePremiumInLocalStorage',userController.makePremiumInLocalStorage);
+
+router.post('/addToTotalExpense',userController.addToTotalExpense);
 
 module.exports  = router

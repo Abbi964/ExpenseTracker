@@ -18,7 +18,7 @@ async function addExpense(e){
     }
     else{
         try{
-            // amking an obj of inputs and also token
+            // making an obj of inputs and also token
             let expenseInfo = {
                 amount:  amount.value, 
                 category: category.value, 
@@ -38,10 +38,15 @@ async function addExpense(e){
             li.appendChild(editBtn)
             //appending li to ul
             expenseList.appendChild(li);
+            
+            // adding in total expense of user
+            addToTotalExpense(amount.value)
 
             // crearing the inputs
             amount.value = ''
             description.value = ''
+
+
         }
         catch(err){
             console.log(err)
@@ -107,12 +112,14 @@ async function modifyExpense(e){
             // deleting expense from database
             let li_id = e.target.parentElement.id;
             let token = localStorage.getItem('token')
-            await axios.delete(`http://localhost:3000/expense/delete/${li_id}`,{
+            let response = await axios.delete(`http://localhost:3000/expense/delete/${li_id}`,{
                 headers:{'Authorization':token}
             })
             // deleting from DOM
             let li = document.getElementById(li_id)
             li.remove()
+            // substating expense amount from totalexpense of user
+            addToTotalExpense( -response.data.amount)
         }
         catch(err){
             console.log(err)
@@ -172,6 +179,14 @@ function makeEditBtn(){
     return editBtn
 }
 
+function addToTotalExpense(amount){
+    let token = localStorage.getItem('token')
+    axios.post('http://localhost:3000/user/addToTotalExpense',{
+        amount:amount,
+        token:token,
+    })
+}
+
 function changeBuyPremium(){
     // making variable 'premium' = true
     premium = true;
@@ -213,11 +228,7 @@ async function showLeaderboard(e){
     // showing leaderboardArray on DOM
     leaderboardUl.innerHTML = '<h2>LeaderBoard :</h2>'
     leaderboardArray.forEach((entry)=>{
-        // making null = 0
-        if(entry.totalAmount===null){
-            entry.totalAmount = 0
-        }
-        let li = makeLeaderboardLi(entry.name , entry.totalAmount)
+        let li = makeLeaderboardLi(entry.name , entry.totalExpense)
         leaderboardUl.appendChild(li)
     })
 }

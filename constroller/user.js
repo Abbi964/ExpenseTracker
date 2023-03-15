@@ -24,6 +24,7 @@ exports.postSignupPage = async(req,res,next)=>{
                     name:name,
                     email:email,
                     password:hash,
+                    totalExpense:0,
                 }
             })
             res.json(created);
@@ -83,6 +84,22 @@ exports.makePremiumInLocalStorage = (req,res,next)=>{
     let data = tokenToData(token);
     let newToken =  generateJWT(data.userId,true)
     res.json({token:newToken}) 
+}
+
+exports.addToTotalExpense = async(req,res,next)=>{
+    try{
+        amount = req.body.amount
+        token = req.body.token
+        let data = tokenToData(token);
+        let userId = data.userId;
+        let user = await User.findOne({where:{id:userId}})
+        user.totalExpense = parseInt(user.totalExpense) + parseInt(amount)
+        user.save();
+        res.json('updated')
+    }
+    catch(err){
+        console.log(err)
+    }
 }
 
 
