@@ -1,24 +1,23 @@
-const User = require('../model/user')
+const User = require('../model/user');
+const Expense = require('../model/expense');
+const sequelize = require('../util/database');
 
 exports.getLeaderboard = async(req,res,next)=>{
-    // first getting all users
-    let userArray = await User.findAll()
-    let leaderboardArray = [];
-    for(let user of userArray){
-        let userInfoObj = {name:user.dataValues.name}
-        // finding all expenses of user and adding
-        let totalExpense = 0;
-        let expenseArray = await user.getExpenses()
-        expenseArray.forEach((expense)=>{
-            totalExpense += expense.dataValues.amount
-        })
-        // adding total expense on userInfoObj
-        userInfoObj.expenses = totalExpense
-        // pushing userInfoObj in leaderboardArray
-        leaderboardArray.push(userInfoObj)    
-    }
-    // now sorting the leaderboradArray in descending order of expenses
-    leaderboardArray.sort((a,b)=> b.expenses - a.expenses)
-
+    // first getting id and name from all users and adding 'amount' from expense table
+    // related to that user by joining both table using 'include'
+    let leaderboardArray = await User.findAll({
+        attributes:['id','name',[sequelize.fn('SUM',sequelize.col('expenses.amount')),'totalAmount']],
+        include:[
+            {
+                model: Expense,
+                attributes: []
+            }
+        ],
+        group: 'user.id',  // grouping by id column from user table
+        order:[
+            ['totalAmount','DESC']  // ordering by total amount
+        ]
+    })
+    
     res.json({leaderboardArray:leaderboardArray})
 }

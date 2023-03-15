@@ -213,7 +213,11 @@ async function showLeaderboard(e){
     // showing leaderboardArray on DOM
     leaderboardUl.innerHTML = '<h2>LeaderBoard :</h2>'
     leaderboardArray.forEach((entry)=>{
-        let li = makeLeaderboardLi(entry.name , entry.expenses)
+        // making null = 0
+        if(entry.totalAmount===null){
+            entry.totalAmount = 0
+        }
+        let li = makeLeaderboardLi(entry.name , entry.totalAmount)
         leaderboardUl.appendChild(li)
     })
 }
