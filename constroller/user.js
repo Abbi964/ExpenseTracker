@@ -1,5 +1,7 @@
 const path  = require('path')
 
+const sequelize = require('../util/database')
+
 const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
@@ -11,6 +13,7 @@ exports.getSignUpPage = (req,res,next)=>{
 }
 
 exports.postSignupPage = async(req,res,next)=>{
+    const t = await sequelize.transaction()
     try{
         const name = req.body.name
         const email = req.body.email
@@ -25,12 +28,15 @@ exports.postSignupPage = async(req,res,next)=>{
                     email:email,
                     password:hash,
                     totalExpense:0,
-                }
+                },
+                transaction:t,
             })
+            await t.commit()
             res.json(created);
         })
     }
     catch(err){
+        await t.rollback()
         console.log(err)
     }
 }
@@ -40,21 +46,27 @@ exports.getLoginPage = (req,res,next)=>{
 }
 
 exports.postLoginPage = async(req,res,next)=>{
+    const t = await sequelize.transaction()
     try{
         const email = req.body.email;
         const password = req.body.password;
-        let user = await User.findOne({where:{email:email}});
+        let user = await User.findOne({
+            where:{email:email},
+            transaction:t,
+        });
+        await t.commit()
         // checking if user email exists in DB or not
         if(user===null){
             res.status(404).json({msg:'User not found'})
         }
         else{
-            bcrypt.compare(password,user.dataValues.password,(err,same)=>{
+            bcrypt.compare(password,user.dataValues.password,async(err,same)=>{
                 if (err) {
                     console.log(err);
                     res.status(500).json({ msg: 'Internal server error' });
                 }
                 else if(same){
+                    
                     res.json({msg:'logging in user',token:generateJWT(user.dataValues.id , user.dataValues.isPremiumUser)})
                 }
                 else{
@@ -64,6 +76,7 @@ exports.postLoginPage = async(req,res,next)=>{
         }
     }
     catch(err){
+        t.rollback();
         console.log(err)
     }
 }
@@ -87,17 +100,23 @@ exports.makePremiumInLocalStorage = (req,res,next)=>{
 }
 
 exports.addToTotalExpense = async(req,res,next)=>{
+    const t = await sequelize.transaction();
     try{
         amount = req.body.amount
         token = req.body.token
         let data = tokenToData(token);
         let userId = data.userId;
-        let user = await User.findOne({where:{id:userId}})
+        let user = await User.findOne({
+            where:{id:userId},
+            transaction:t,
+        })
+        await t.rollback()
         user.totalExpense = parseInt(user.totalExpense) + parseInt(amount)
         user.save();
         res.json('updated')
     }
     catch(err){
+        await t.rollback()
         console.log(err)
     }
 }

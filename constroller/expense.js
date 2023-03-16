@@ -1,3 +1,5 @@
+const sequelize = require('../util/database')
+
 const path = require('path');
 const Expense = require('../model/expense')
 
@@ -10,6 +12,7 @@ exports.getExpenseTracker = (req,res,next)=>{
 }
 
 exports.addExpense = async(req,res,next)=>{
+    const t = await sequelize.transaction()
     try{
         const amount = req.body.amount;
         const category = req.body.category;
@@ -24,10 +27,15 @@ exports.addExpense = async(req,res,next)=>{
             category:category,
             description:description,
             UserId:userId,
+        },
+        {
+            transaction:t,
         })
+        await t.commit()
         res.json(expense.id)
     }
     catch(err){
+        await t.rollback()
         console.log(err)
     }
 
@@ -47,6 +55,7 @@ exports.getAllExpenses = async(req,res,next)=>{
 }
 
 exports.deleteExpense = async(req,res,next)=>{
+    const t = await sequelize.transaction()
     try{
         let expenseId = req.params.expenseId;
         let token = req.headers.authorization;
@@ -54,7 +63,10 @@ exports.deleteExpense = async(req,res,next)=>{
         let data = tokenToData(token)
         let userId = data.userId
         // finding the expense to destroy
-        let exp = await Expense.findByPk(expenseId)
+        let exp = await Expense.findByPk(expenseId,{
+            transaction:t,
+        })
+        await t.commit()
         // before deleting expense storing exp.amount so that can be substrated from total expense of user
         let amount = exp.amount
         // checking if id of exp is same as id given in token and destroying exp
@@ -67,6 +79,7 @@ exports.deleteExpense = async(req,res,next)=>{
         }
     }
     catch(err){
+        await t.rollback()
         console.log(err)
     }
 }
