@@ -3,3 +3,6 @@ node_modules
 
 #ignore .env
 .env
+
+#ignore a ts file which i used to solve an error in sendinblue emailserviceprovider
+sib-api-v3-sdk.d.ts

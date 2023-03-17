@@ -1,17 +1,25 @@
 const emailInput = document.querySelector('#emailInput');
 const form = document.querySelector('.form-class');
 const prompt = document.querySelector('.prompt')
+const Info = document.querySelector('.Info')
 
 form.addEventListener('submit',submit)
 
-function submit(e){
+async function submit(e){
     e.preventDefault()
     if(emailInput.value ===''){
         prompt.innerHTML = '<p>Please Fill the Email</p>'
         setTimeout(()=>prompt.innerHTML='',1000)
     }
     else{
-        let obj = {email:emailInput.value}
-        axios.post('http://localhost:3000/password/forgotPassword',obj)
+        try{
+            let obj = {email:emailInput.value}
+            let result = await axios.post('http://localhost:3000/password/forgotPassword',obj);
+            Info.innerHTML = `<p>${result.data.msg}</p>`
+            
+        }
+        catch(err){
+            console.log(err)
+        }
     }
 }
