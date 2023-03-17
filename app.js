@@ -12,7 +12,8 @@ const sequelize = require('./util/database')
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 const orderRoutes = require('./routes/order');
-const premiumRoutes = require('./routes/premium')
+const premiumRoutes = require('./routes/premium');
+const passwordRoutes = require('./routes/password')
 
 const User = require('./model/user');
 const Expense = require('./model/expense');
@@ -32,6 +33,7 @@ app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/order',orderRoutes);
 app.use('/premium',premiumRoutes);
+app.use('/password',passwordRoutes);
 
 
 // defining relation between user and expense

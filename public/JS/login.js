@@ -31,3 +31,11 @@ async function SubmitForm(e){
         }
     }
 }
+
+const forgotPassword = document.querySelector('.forgotPassword');
+
+forgotPassword.addEventListener('click',getResetPassword)
+
+function getResetPassword(e){
+    window.location.href = '/password/forgotpassword'
+}

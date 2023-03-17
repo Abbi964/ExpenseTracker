@@ -61,3 +61,13 @@ header{
     text-align: center;
     font-weight: bold;
 }
+
+.forgotPassword{
+    margin-top: 1em;
+    padding: 0.3em;
+    width: 12%;
+    background-color: rgb(251, 220, 99);
+    border-radius: 6px;
+    margin-left: 1em;
+    margin-bottom: 1em;
+}
