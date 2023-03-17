@@ -18,6 +18,7 @@ const passwordRoutes = require('./routes/password')
 const User = require('./model/user');
 const Expense = require('./model/expense');
 const Order = require('./model/order')
+const ForgotPasswordRequest = require('./model/ForgotPasswordRequest')
 
 // making public static
 app.use(express.static(path.join(__dirname,'public')));
@@ -43,6 +44,10 @@ Expense.belongsTo(User);
 // defining relation between User and Order
 User.hasMany(Order);
 Order.belongsTo(User);
+
+// defining relation between User and ForgotPasswordRequest
+User.hasMany(ForgotPasswordRequest);
+ForgotPasswordRequest.belongsTo(User);
 
 sequelize.sync();
 
