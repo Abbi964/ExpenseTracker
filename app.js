@@ -13,12 +13,14 @@ const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
 const orderRoutes = require('./routes/order');
 const premiumRoutes = require('./routes/premium');
-const passwordRoutes = require('./routes/password')
+const passwordRoutes = require('./routes/password');
+const incomeRoutes = require('./routes/income');
 
 const User = require('./model/user');
 const Expense = require('./model/expense');
 const Order = require('./model/order')
 const ForgotPasswordRequest = require('./model/ForgotPasswordRequest')
+const Income = require('./model/income')
 
 // making public static
 app.use(express.static(path.join(__dirname,'public')));
@@ -35,11 +37,16 @@ app.use('/expense',expenseRoutes);
 app.use('/order',orderRoutes);
 app.use('/premium',premiumRoutes);
 app.use('/password',passwordRoutes);
+app.use('/income',incomeRoutes);
 
 
 // defining relation between user and expense
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+// defining relation between user and income
+User.hasMany(Income);
+Income.belongsTo(User);
 
 // defining relation between User and Order
 User.hasMany(Order);

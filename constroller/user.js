@@ -28,6 +28,7 @@ exports.postSignupPage = async(req,res,next)=>{
                     email:email,
                     password:hash,
                     totalExpense:0,
+                    totalIncome:0,
                 },
                 transaction:t,
             })
@@ -110,8 +111,30 @@ exports.addToTotalExpense = async(req,res,next)=>{
             where:{id:userId},
             transaction:t,
         })
-        await t.rollback()
+        await t.commit()
         user.totalExpense = parseInt(user.totalExpense) + parseInt(amount)
+        user.save();
+        res.json('updated')
+    }
+    catch(err){
+        await t.rollback()
+        console.log(err)
+    }
+}
+
+exports.addToTotalIncome = async(req,res,next)=>{
+    const t = await sequelize.transaction();
+    try{
+        amount = req.body.amount
+        token = req.body.token
+        let data = tokenToData(token);
+        let userId = data.userId;
+        let user = await User.findOne({
+            where:{id:userId},
+            transaction:t,
+        })
+        await t.commit()
+        user.totalIncome = parseInt(user.totalIncome) + parseInt(amount)
         user.save();
         res.json('updated')
     }

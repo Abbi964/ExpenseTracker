@@ -18,4 +18,6 @@ router.get('/makePremiumInLocalStorage',userController.makePremiumInLocalStorage
 
 router.post('/addToTotalExpense',userController.addToTotalExpense);
 
+router.post('/addToTotalIncome',userController.addToTotalIncome);
+
 module.exports  = router

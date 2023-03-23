@@ -28,7 +28,11 @@
             </select><br>
             <label for="description">Description</label><br>
             <input type="text" class="form-input" id="description"><br>
-            <button type="submit" class="submitBtn">Add Expense</button>
+            <input type="radio" id="income" name="income-expense" value="income">
+            <label for="income">Income</label>
+            <input type="radio" id="expense" name="income-expense" value="expense" checked>
+            <label for="expense">Expense</label><br>
+            <button type="submit" class="submitBtn">Add Expense/Income</button>
         </form>
         <div class="buyPremiumDiv">
             <button class="buyPremium">Buy Premium</button>
@@ -37,10 +41,17 @@
     </div>
     <div class="ul-div">
         <ul class="expenseList">
-
+            <h3 style="color: #fd5454;" class="ul-h">EXPENSE</h3>
+        </ul>
+        <ul class="incomeList">
+            <h3 style="color: rgb(61, 168, 2);" class="ul-h">INCOME</h3>
         </ul>
     </div>
+    <div class="ul-div-income">
+        
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="/JS/expense.js"></script>
 </body>
 

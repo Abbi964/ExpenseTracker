@@ -2,15 +2,17 @@ const amount = document.getElementById('amountInput')
 const category = document.getElementById('Category')
 const description = document.getElementById('description')
 const form = document.querySelector('.form-class')
+const ulDiv = document.querySelector('.ul-div')
 const expenseList = document.querySelector('.expenseList')
+const incomeList = document.querySelector('.incomeList')
 const prompt = document.querySelector('.prompt')
 
 let premium = false;
 
 
-form.addEventListener('submit',addExpense);
+form.addEventListener('submit',addExpenseOrincome);
 
-async function addExpense(e){
+async function addExpenseOrincome(e){
     e.preventDefault()
     if(amount.value==='' || category.value==='' || description.value===''){
         prompt.innerHTML = '<p>Please Fill all the fields</p>'
@@ -18,18 +20,33 @@ async function addExpense(e){
     }
     else{
         try{
+            // first checking expense on income which is selected
+            let expenseOrIncome = 'expense';
+            if(document.getElementById('income').checked){
+                expenseOrIncome = 'income';
+            }
             // making an obj of inputs and also token
-            let expenseInfo = {
+            let expOrIncInfo = {
                 amount:  amount.value, 
                 category: category.value, 
                 description:  description.value, 
                 token:  localStorage.getItem('token')
             };
-            // making a post request and returning id of expense
-            let response = await axios.post('http://localhost:3000/expense/addexpense',expenseInfo);
+            // making a post request and returning id of expense or Income
+            let response;
+            let li;
+            if(expenseOrIncome==='expense'){
+                response = await axios.post(`http://localhost:3000/expense/addexpense`,expOrIncInfo);
+                // making an list item
+                li = makeLi(response.data, amount.value, category.value, description.value,'listItemExp');
+            }
+            else{
+                response = await axios.post('http://localhost:3000/income/addincome',expOrIncInfo);
+                // making an list item
+                li = makeLi(response.data, amount.value, category.value, description.value,'listItemInc');
+            }
             //Displaying expense in DOM
-            // making an list item
-            let li = makeLi(response.data, amount.value, category.value, description.value);
+            
             // appending a delete btn
             let delBtn = makeDelBtn();
             li.appendChild(delBtn)
@@ -37,16 +54,20 @@ async function addExpense(e){
             let editBtn = makeEditBtn();
             li.appendChild(editBtn)
             //appending li to ul
-            expenseList.appendChild(li);
-            
-            // adding in total expense of user
-            addToTotalExpense(amount.value)
-
-            // crearing the inputs
+            if(expenseOrIncome==='expense'){
+                expenseList.appendChild(li);
+                // adding in total expense of user
+                addToTotalExpense(amount.value)
+            }
+            else{
+                console.log('adding income')
+                incomeList.appendChild(li);
+                // adding in total Income of user
+                addToTotalIncome(amount.value)
+            }
+            // clearing the inputs
             amount.value = ''
             description.value = ''
-
-
         }
         catch(err){
             console.log(err)
@@ -63,9 +84,9 @@ async function activatePremium(e){
     let response = await axios.get('http://localhost:3000/order/purchasePremium',{headers:{'Authorization':token}})
     // making an object to pass as option in new razorpay obj which will be made
     let options = {
-        key:response.data.key_id,
-        order_id: response.data.order.id,
-        handler: async function(respo){
+        "key":response.data.key_id,
+        "order_id": response.data.order.id,
+        "handler": async function(respo){
             // handeler is CB fn which will be called by razorpay when payment will be successful
             console.log(respo)
             await axios.post('http://localhost:3000/order/updateTransectionStatus',{
@@ -85,14 +106,11 @@ async function activatePremium(e){
             localStorage.setItem('token',newToken)
         }
     } 
-    //before making new Razorpay obj we have to attach razorpay script
-    // so that we can acess Razorpay from frontend
-    const scrpt = document.createElement('script')
-    scrpt.src = 'https://checkout.razorpay.com/v1/checkout.js'
-    document.querySelector('body').appendChild(scrpt)
+    
     // now making the new razorpay object
-    const rzp1 = new Razorpay(options);
+    var rzp1 = new Razorpay(options);
     rzp1.open();  // this will open razorpay front end
+    e.preventDefault()
 
     rzp1.on('payment.failed',(res)=>{
         console.log(res)
@@ -103,44 +121,67 @@ async function activatePremium(e){
 }
 
 //-----modifying expenses using del and edit button---//
-expenseList.addEventListener('click',modifyExpense);
+ulDiv.addEventListener('click',modifyExpense);
 
 async function modifyExpense(e){
     //when del button is clicked
     if(e.target.className==='delBtn'){
-        try{
-            // deleting expense from database
-            let li_id = e.target.parentElement.id;
-            let token = localStorage.getItem('token')
-            let response = await axios.delete(`http://localhost:3000/expense/delete/${li_id}`,{
-                headers:{'Authorization':token}
-            })
-            // deleting from DOM
-            let li = document.getElementById(li_id)
-            li.remove()
-            // substating expense amount from totalexpense of user
-            addToTotalExpense( -response.data.amount)
-        }
-        catch(err){
-            console.log(err)
-        }
+        // if we clicked on del btn of expense list
+        if(e.target.parentElement.parentElement.className==='expenseList'){
+            try{
+                // deleting expense from database
+                let li_id = e.target.parentElement.id;
+                let token = localStorage.getItem('token')
+                let response = await axios.delete(`http://localhost:3000/expense/delete/${li_id}`,{
+                    headers:{'Authorization':token}
+                })
+                // deleting from DOM
+                let li = e.target.parentElement
+                li.remove()
+                // substating expense amount from totalexpense of user
+                addToTotalExpense( -response.data.amount)
+            }
+            catch(err){
+                console.log(err)
+            }
+        } 
+        // if we clicked on del btn of income list
+        else if(e.target.parentElement.parentElement.className==='incomeList'){
+            try{
+                // deleting income from database
+                let li_id = e.target.parentElement.id;
+                let token = localStorage.getItem('token')
+                let response = await axios.delete(`http://localhost:3000/income/delete/${li_id}`,{
+                    headers:{'Authorization':token}
+                })
+                // deleting from DOM
+                let li = e.target.parentElement
+                li.remove()
+                // substating expense amount from totalexpense of user
+                addToTotalIncome( -response.data.amount)
+            }
+            catch(err){
+                console.log(err)
+            }
+        } 
     }
 }
 
 //-----loading all expenses when page is loded----///
-window.addEventListener('DOMContentLoaded',loadExpenses)
+window.addEventListener('DOMContentLoaded',loadExpensesAndIncome)
 
-async function loadExpenses(e){
+async function loadExpensesAndIncome(e){
     try{
         // first checking if premium user and if is changing DOM accordingly
         checkingAndapplyingPremium()
+        //------------first loading all expense-------------------//
         // getting all expenses from database of user logged(using JWT)
         let token = localStorage.getItem('token')
         let response = await axios.get('http://localhost:3000/expense/all_expenses',{ headers:{ 'Authorization': token }})
         let expensesArray = response.data
         expensesArray.forEach((exp)=>{
             //making an list item
-            let li = makeLi(exp.id, exp.amount, exp.category, exp.description);
+            let li = makeLi(exp.id, exp.amount, exp.category, exp.description,'listItemExp');
             // appending a delete button
             let delBtn = makeDelBtn();
             li.appendChild(delBtn);
@@ -150,6 +191,23 @@ async function loadExpenses(e){
             //appending to ul
             expenseList.appendChild(li)
         })
+
+        //--------now loading all incomes-----------------//
+        // getting all income from database of user logged(using JWT)
+        let incResponse = await axios.get('http://localhost:3000/income/all_income',{ headers:{ 'Authorization': token }})
+        let incomeArray = incResponse.data
+        incomeArray.forEach((inc)=>{
+            //making an list item
+            let li = makeLi(inc.id, inc.amount, inc.category, inc.description,'listItemInc');
+            // appending a delete button
+            let delBtn = makeDelBtn();
+            li.appendChild(delBtn);
+            // appending an edit button
+            let editBtn = makeEditBtn(); 
+            li.appendChild(editBtn)
+            //appending to ul
+            incomeList.appendChild(li)
+        })
     }
     catch(err){
         console.log(err)
@@ -157,10 +215,10 @@ async function loadExpenses(e){
 }
 
 
-function makeLi(id,amount,category,description){
+function makeLi(id,amount,category,description,className){
     let li = document.createElement('li');
     li.id = id
-    li.className = 'listItem'
+    li.className = className
     li.innerHTML = `<p>Rs${amount} - ${category} - ${description}</p>`
     return li
 }
@@ -182,6 +240,14 @@ function makeEditBtn(){
 function addToTotalExpense(amount){
     let token = localStorage.getItem('token')
     axios.post('http://localhost:3000/user/addToTotalExpense',{
+        amount:amount,
+        token:token,
+    })
+}
+
+function addToTotalIncome(amount){
+    let token = localStorage.getItem('token')
+    axios.post('http://localhost:3000/user/addToTotalIncome',{
         amount:amount,
         token:token,
     })

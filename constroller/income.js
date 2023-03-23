@@ -1,16 +1,11 @@
 const sequelize = require('../util/database')
 
 const path = require('path');
-const Expense = require('../model/expense')
+const Income = require('../model/income')
 
 const jwt = require('jsonwebtoken');
 
-
-exports.getExpenseTracker = (req,res,next)=>{
-    res.sendFile(path.join(__dirname,'..','views','expense.html'))
-}
-
-exports.addExpense = async(req,res,next)=>{
+exports.addIncome = async(req,res,next)=>{
     const t = await sequelize.transaction()
     try{
         const amount = req.body.amount;
@@ -19,9 +14,9 @@ exports.addExpense = async(req,res,next)=>{
         const token = req.body.token;
         // getting userid from token
         let data = tokenToData(token)
-        let userId = data.userId 
+        let userId = data.userId
         // adding info in expense table
-        let expense = await Expense.create({
+        let income = await Income.create({
             amount:amount,
             category:category,
             description:description,
@@ -31,46 +26,45 @@ exports.addExpense = async(req,res,next)=>{
             transaction:t,
         })
         await t.commit()
-        res.json(expense.id)
+        res.json(income.id)
     }
     catch(err){
         await t.rollback()
         console.log(err)
     }
-
 }
 
-exports.getAllExpenses = async(req,res,next)=>{
+exports.getAllIncome = async(req,res,next)=>{
     try{
         let user = req.user
         // using magic methods provided by sequelize to access all expenses from user
         // as user has many expenses(relation)
-        let allExpenses = await user.getExpenses();
-        res.json(allExpenses)
+        let allIncome = await user.getIncomes();
+        res.json(allIncome)
     }
     catch(err){
         console.log(err)
     }
 }
 
-exports.deleteExpense = async(req,res,next)=>{
+exports.deleteIncome = async(req,res,next)=>{
     const t = await sequelize.transaction()
     try{
-        let expenseId = req.params.expenseId;
+        let incomeId = req.params.incomeId;
         let token = req.headers.authorization;
         // getting userID from token
         let data = tokenToData(token)
         let userId = data.userId
         // finding the expense to destroy
-        let exp = await Expense.findByPk(expenseId,{
+        let inc = await Income.findByPk(incomeId,{
             transaction:t,
         })
-        await t.commit()
-        // before deleting expense storing exp.amount so that can be substrated from total expense of user
-        let amount = exp.amount
-        // checking if id of exp is same as id given in token and destroying exp
-        if(userId==exp.UserId){
-            exp.destroy();
+        // before deleting income storing inc.amount so that can be substrated from total income of user
+        let amount = inc.amount
+        // checking if id of inc is same as id given in token and destroying inc
+        if(userId==inc.UserId){
+            inc.destroy();
+            await t.commit()
             res.json({amount:amount})
         }
         else{
@@ -82,8 +76,6 @@ exports.deleteExpense = async(req,res,next)=>{
         console.log(err)
     }
 }
-
-
 
 function tokenToData(token){
     return jwt.verify(token,'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
