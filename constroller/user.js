@@ -8,6 +8,12 @@ const jwt = require('jsonwebtoken')
 
 const User = require('../model/user')
 
+const AWS = require('aws-sdk')
+const { reject } = require('bcrypt/promises')
+
+const UserServices = require('../services/user');
+const S3Services = require('../services/s3');
+
 exports.getSignUpPage = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'..','views','signup.html'));
 }
@@ -144,11 +150,50 @@ exports.addToTotalIncome = async(req,res,next)=>{
     }
 }
 
+exports.downloadExpense = async(req,res,next)=>{
+    try{
+        let user = req.user
+        let incomes = UserServices.getExpenses(user);
+        let expenses = UserServices.getIncomes(user);
+        let incExp = await Promise.all([incomes,expenses])
+        let stringifiedIncExp = JSON.stringify(incExp)
+        // filename should depend on user id and time of request
+        let filename = `Expense-${user.id}/${new Date}.txt`
+        let fileUrl = await S3Services.uploadToS3(stringifiedIncExp,filename)
+        res.json({fileUrl,success:true})
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+exports.saveFileUrl = async(req,res,next)=>{
+    try{
+        let user = req.user
+        await user.createFileUrl({url:req.body.fileUrl})
+        res.json('done')
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+exports.getFileUrls = async(req,res,next)=>{
+    try{
+        // getting all file urls downloaded by user
+        let fileUrlArray = await req.user.getFileUrls()
+        res.json({downloadedFiles:fileUrlArray})
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 
 function generateJWT(id,isPremiumUser){
-    return jwt.sign({userId:id , isPremium:isPremiumUser},'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
+    return jwt.sign({userId:id , isPremium:isPremiumUser},process.env.JWT_KEY)
 }
 
 function tokenToData(token){
-    return jwt.verify(token,'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
+    return jwt.verify(token,process.env.JWT_KEY)
 }

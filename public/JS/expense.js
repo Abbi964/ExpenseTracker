@@ -305,3 +305,10 @@ function makeLeaderboardLi(name,totalExpense){
     li.innerText = `User - ${name} ,  Total Expenses - Rs${totalExpense}`
     return li
 }
+
+
+//---------All Expense button---------------------------//
+const AllExpBtn = document.getElementById('allExpenseButton')
+AllExpBtn.addEventListener('click',(e)=>{
+    window.location.href = 'http://localhost:3000/premium/getAllExpensePage'
+})

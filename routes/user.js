@@ -1,4 +1,5 @@
 const userController = require('../constroller/user')
+const userAuthenticaltion = require('../middleware/auth')
 
 const express = require('express');
 
@@ -19,5 +20,11 @@ router.get('/makePremiumInLocalStorage',userController.makePremiumInLocalStorage
 router.post('/addToTotalExpense',userController.addToTotalExpense);
 
 router.post('/addToTotalIncome',userController.addToTotalIncome);
+
+router.get('/download',userAuthenticaltion.authenticate,userController.downloadExpense)
+
+router.post('/saveFileUrl',userAuthenticaltion.authenticate,userController.saveFileUrl)
+
+router.get('/getFileUrls',userAuthenticaltion.authenticate,userController.getFileUrls)
 
 module.exports  = router

@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/allExpense.css">
     <title>All Expenses</title>
 </head>
 <body>
     <h1>All Expenses</h1>
-    <table>
+    <table id="table">
         <tr>
             <th>S.No.</th>
             <th>Date</th>
@@ -19,6 +20,11 @@
 
         </tr>
     </table>
-    
+    <button id="download">download</button>
+    <ul id="downloadedFiles">
+        <h3>downloadedFiles</h3>
+    </ul>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/JS/allExpense.js"></script>
 </body>
 </html>
