@@ -1,4 +1,4 @@
-const passwordController = require('../constroller/password')
+const passwordController = require('../controller/password')
 
 const express = require('express');
 

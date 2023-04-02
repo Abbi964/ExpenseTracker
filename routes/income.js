@@ -1,4 +1,4 @@
-const incomeController = require('../constroller/income');
+const incomeController = require('../controller/income');
 const userAuthenticaltion = require('../middleware/auth')
 
 const express = require('express');

@@ -1,4 +1,4 @@
-const premiumController = require('../constroller/premium');
+const premiumController = require('../controller/premium');
 const userAuthenticaltion = require('../middleware/auth')
 
 const express = require('express');

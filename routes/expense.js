@@ -1,4 +1,4 @@
-const expenseController = require('../constroller/expense')
+const expenseController = require('../controller/expense')
 const userAuthenticaltion = require('../middleware/auth')
 
 const express = require('express')

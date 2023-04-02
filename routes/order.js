@@ -1,4 +1,4 @@
-const orderController = require('../constroller/order')
+const orderController = require('../controller/order')
 const userAuthenticaltion = require('../middleware/auth')
 
 const express = require('express');
