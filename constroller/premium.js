@@ -5,13 +5,18 @@ const sequelize = require('../util/database');
 const path = require('path')
 
 exports.getLeaderboard = async(req,res,next)=>{
-    let leaderboardArray = await User.findAll({
-        attributes:['name','totalExpense'],
-        order:[
-            ['totalExpense','DESC']
-        ]
-    })
-    res.json({leaderboardArray:leaderboardArray})
+    try{
+        let leaderboardArray = await User.findAll({
+            attributes:['name','totalExpense'],
+            order:[
+                ['totalExpense','DESC']
+            ]
+        })
+        res.json({leaderboardArray:leaderboardArray})
+    }
+    catch(err){
+        console.log(err)
+    }
 
     //------below is a way of doing if there is no total expense column in User(but its very process hungry)---///
     // // first getting id and name from all users and adding 'amount' from expense table

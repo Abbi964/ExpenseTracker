@@ -42,11 +42,27 @@ exports.addExpense = async(req,res,next)=>{
 
 exports.getAllExpenses = async(req,res,next)=>{
     try{
+        let page = +req.query.page
         let user = req.user
-        // using magic methods provided by sequelize to access all expenses from user
+        let maxExpPerPage = 5
+        // now finding how many expenses are there
+        let totalExpense = await user.countExpenses()  //magic method
+        // calculation last page
+        let lastPage = Math.ceil(totalExpense/maxExpPerPage)
+        // using magic methods provided by sequelize to access expenses from user
         // as user has many expenses(relation)
-        let allExpenses = await user.getExpenses();
-        res.json(allExpenses)
+        let expensesArray = await user.getExpenses({
+            offset: (page-1) * +maxExpPerPage,
+            limit: +maxExpPerPage
+        });
+        res.json({
+            expenses:expensesArray,
+            havePreviousPage:page>1,
+            previousPage:page-1,
+            haveNextPage:page<lastPage,
+            nextPage:page+1,
+            currentPage:page
+        })
     }
     catch(err){
         console.log(err)
@@ -54,7 +70,6 @@ exports.getAllExpenses = async(req,res,next)=>{
 }
 
 exports.deleteExpense = async(req,res,next)=>{
-    const t = await sequelize.transaction()
     try{
         let expenseId = req.params.expenseId;
         let token = req.headers.authorization;
@@ -62,10 +77,8 @@ exports.deleteExpense = async(req,res,next)=>{
         let data = tokenToData(token)
         let userId = data.userId
         // finding the expense to destroy
-        let exp = await Expense.findByPk(expenseId,{
-            transaction:t,
-        })
-        await t.commit()
+        let exp = await Expense.findByPk(expenseId)
+        
         // before deleting expense storing exp.amount so that can be substrated from total expense of user
         let amount = exp.amount
         // checking if id of exp is same as id given in token and destroying exp
@@ -78,7 +91,6 @@ exports.deleteExpense = async(req,res,next)=>{
         }
     }
     catch(err){
-        await t.rollback()
         console.log(err)
     }
 }

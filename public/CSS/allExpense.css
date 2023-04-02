@@ -1,3 +1,25 @@
-th, td{
+body{
+    font-family: sans-serif;
+    padding: 1em;
+    margin: 0;
+}
+
+table{
     border: 1px solid black;
+}
+
+th, td{
+    /* border: 1px solid black; */
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 1px 5px 1px 5px;
+}
+
+.download{
+    margin-top: 0.5em;
+    padding: 2px;
+}
+
+li{
+    margin-top: 2px;
 }

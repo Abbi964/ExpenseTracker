@@ -36,11 +36,27 @@ exports.addIncome = async(req,res,next)=>{
 
 exports.getAllIncome = async(req,res,next)=>{
     try{
+        let page = +req.query.page
         let user = req.user
-        // using magic methods provided by sequelize to access all expenses from user
-        // as user has many expenses(relation)
-        let allIncome = await user.getIncomes();
-        res.json(allIncome)
+        let maxExpPerPage = 5
+        // now finding how many incomes are there
+        let totalIncome = await user.countIncomes()  //magic method
+        // calculation last page
+        let lastPage = Math.ceil(totalIncome/maxExpPerPage)
+        // using magic methods provided by sequelize to get incomes from user
+        // as user has many incomes(relation)
+        let incomesArray = await user.getIncomes({
+            offset: (page-1) * +maxExpPerPage,
+            limit: +maxExpPerPage
+        });
+        res.json({
+            incomes:incomesArray,
+            havePreviousPage:page>1,
+            previousPage:page-1,
+            haveNextPage:page<lastPage,
+            nextPage:page+1,
+            currentPage:page
+        })
     }
     catch(err){
         console.log(err)

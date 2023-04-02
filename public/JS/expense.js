@@ -7,8 +7,6 @@ const expenseList = document.querySelector('.expenseList')
 const incomeList = document.querySelector('.incomeList')
 const prompt = document.querySelector('.prompt')
 
-let premium = false;
-
 
 form.addEventListener('submit',addExpenseOrincome);
 
@@ -174,44 +172,120 @@ async function loadExpensesAndIncome(e){
     try{
         // first checking if premium user and if is changing DOM accordingly
         checkingAndapplyingPremium()
-        //------------first loading all expense-------------------//
-        // getting all expenses from database of user logged(using JWT)
+        //------------first loading all expense for page -------------------//
+        let page = 1
+        // getting all expenses from database of user logged for current page(using JWT)
         let token = localStorage.getItem('token')
-        let response = await axios.get('http://localhost:3000/expense/all_expenses',{ headers:{ 'Authorization': token }})
-        let expensesArray = response.data
-        expensesArray.forEach((exp)=>{
-            //making an list item
-            let li = makeLi(exp.id, exp.amount, exp.category, exp.description,'listItemExp');
-            // appending a delete button
-            let delBtn = makeDelBtn();
-            li.appendChild(delBtn);
-            // appending an edit button
-            let editBtn = makeEditBtn(); 
-            li.appendChild(editBtn)
-            //appending to ul
-            expenseList.appendChild(li)
-        })
+        let response = await axios.get(`http://localhost:3000/expense/all_expenses?page=${page}`,{ headers:{ 'Authorization': token }})
+        let expensesArray = response.data.expenses
+        showListOnDOM(expensesArray,expenseList)
+        //---------handaling pagination buttons------------------//
+        paginate(response,'expensePageBtns')
 
         //--------now loading all incomes-----------------//
         // getting all income from database of user logged(using JWT)
-        let incResponse = await axios.get('http://localhost:3000/income/all_income',{ headers:{ 'Authorization': token }})
-        let incomeArray = incResponse.data
-        incomeArray.forEach((inc)=>{
-            //making an list item
-            let li = makeLi(inc.id, inc.amount, inc.category, inc.description,'listItemInc');
-            // appending a delete button
-            let delBtn = makeDelBtn();
-            li.appendChild(delBtn);
-            // appending an edit button
-            let editBtn = makeEditBtn(); 
-            li.appendChild(editBtn)
-            //appending to ul
-            incomeList.appendChild(li)
-        })
+        let incResponse = await axios.get(`http://localhost:3000/income/all_income?page=${page}`,{ headers:{ 'Authorization': token }})
+        let incomeArray = incResponse.data.incomes
+        showListOnDOM(incomeArray,incomeList)
+        //------- handling pagination buttons------------//
+        paginate(incResponse,'incomePageBtns')
     }
     catch(err){
         console.log(err)
     }
+}
+
+async function getExpensesAndShow(page){
+    try{
+        let token = localStorage.getItem('token')
+        let response = await axios.get(`http://localhost:3000/expense/all_expenses?page=${page}`,{ headers:{ 'Authorization': token }})
+        let expensesArray = response.data.expenses
+        showListOnDOM(expensesArray,expenseList)
+        paginate(response,'expensePageBtns')
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+async function getIncomeAndShow(page){
+    try{
+        let token = localStorage.getItem('token')
+        let response = await axios.get(`http://localhost:3000/income/all_income?page=${page}`,{ headers:{ 'Authorization': token }})
+        let incomesArray = response.data.incomes
+        showListOnDOM(incomesArray,incomeList)
+        paginate(response,'incomePageBtns')
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+function paginate(response,btnDivId){
+    try{
+        let buttonnDiv = document.getElementById(btnDivId)
+            // if there is a previous page appending a btn for it
+            if(response.data.havePreviousPage){
+                let btnP = document.createElement('button')
+                btnP.innerHTML = response.data.previousPage
+                btnP.addEventListener('click',()=>{
+                            // first clearing  list and pagination
+                            if(btnDivId==='expensePageBtns'){
+                                clearExpenseList()
+                                clearPagination('expensePageBtns')
+                                getExpensesAndShow(+response.data.previousPage)
+                            }
+                            else if(btnDivId==='incomePageBtns'){
+                                clearIncomeList()
+                                clearPagination('incomePageBtns')
+                                getIncomeAndShow(+response.data.previousPage)
+                            }
+                        })
+                buttonnDiv.appendChild(btnP)
+            }
+            // showing a btn for current page
+            let btnC = document.createElement('button');
+            btnC.className = 'currentPaginationBtn'
+            btnC.innerHTML =  response.data.currentPage
+            buttonnDiv.appendChild(btnC)
+            // if there is a next page appending a btn for it
+            if(response.data.haveNextPage){
+                let btnN = document.createElement('button');
+                btnN.innerHTML = response.data.nextPage;
+                btnN.addEventListener('click',()=>{
+                    // first clearing  list and pagination
+                    if(btnDivId==='expensePageBtns'){
+                        clearExpenseList()
+                        clearPagination('expensePageBtns')
+                        getExpensesAndShow(response.data.nextPage)
+                    }
+                    else if(btnDivId==='incomePageBtns'){
+                        clearIncomeList()
+                        clearPagination('incomePageBtns')
+                        getIncomeAndShow(response.data.nextPage)
+                    }
+                })
+                buttonnDiv.appendChild(btnN)
+            }
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+function showListOnDOM(array,list){
+    array.forEach((exp)=>{
+        //making an list item
+        let li = makeLi(exp.id, exp.amount, exp.category, exp.description,'listItemExp');
+        // appending a delete button
+        let delBtn = makeDelBtn();
+        li.appendChild(delBtn);
+        // appending an edit button
+        let editBtn = makeEditBtn(); 
+        li.appendChild(editBtn)
+        //appending to ul
+        list.appendChild(li)
+    })
 }
 
 
@@ -237,6 +311,19 @@ function makeEditBtn(){
     return editBtn
 }
 
+function clearExpenseList(){
+    expenseList.innerHTML = '<h3 style="color: #fd5454;" class="ul-h">EXPENSE</h3>'
+}
+
+function clearIncomeList(){
+    incomeList.innerHTML = '<h3 style="color: rgb(61, 168, 2);" class="ul-h">INCOME</h3>'
+}
+
+function clearPagination(btnLiId){
+    let pageBtns = document.getElementById(btnLiId)
+    pageBtns.innerHTML = 'Page '
+}
+
 function addToTotalExpense(amount){
     let token = localStorage.getItem('token')
     axios.post('http://localhost:3000/user/addToTotalExpense',{
@@ -254,8 +341,6 @@ function addToTotalIncome(amount){
 }
 
 function changeBuyPremium(){
-    // making variable 'premium' = true
-    premium = true;
     // removing buy premium button
     let btn = document.querySelector('.buyPremium')
     btn.remove()
