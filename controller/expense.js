@@ -44,7 +44,8 @@ exports.getAllExpenses = async(req,res,next)=>{
     try{
         let page = +req.query.page
         let user = req.user
-        let maxExpPerPage = 5
+        let maxExpPerPage = +req.query.noOfrows
+        console.log(maxExpPerPage)
         // now finding how many expenses are there
         let totalExpense = await user.countExpenses()  //magic method
         // calculation last page

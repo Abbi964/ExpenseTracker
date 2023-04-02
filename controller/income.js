@@ -38,7 +38,7 @@ exports.getAllIncome = async(req,res,next)=>{
     try{
         let page = +req.query.page
         let user = req.user
-        let maxExpPerPage = 5
+        let maxExpPerPage = +req.query.noOfrows
         // now finding how many incomes are there
         let totalIncome = await user.countIncomes()  //magic method
         // calculation last page

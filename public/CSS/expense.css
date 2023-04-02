@@ -126,6 +126,11 @@ body{
     background-color: rgb(107, 249, 185);;
 }
 
+.rowNoSelector{
+    margin: auto;
+    width: 57%;
+}
+
 .expenseList{
     list-style-type: none;
     margin: auto;

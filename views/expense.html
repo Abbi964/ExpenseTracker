@@ -13,6 +13,7 @@
     <header>
         <h1 class="heading">EXPENSE TRACKER</h1>
     </header>
+    <!------------------ The form Div ------------------------------>
     <div class="form-div">
         <form class="form-class" action="/expense/addexpense" method="POST">
             <div class="prompt"></div>
@@ -39,6 +40,18 @@
             <ul id="leaderboard" class="leaderboardOld"></ul>
         </div>
     </div>
+    <!------------------ The no of rows selector Div ------------------------------>
+    <div id="rowNoSelector" class="rowNoSelector">
+        <label for="rowNoSelectorBtn">Rows Per Page </label>
+        <select id="rowNoSelectorBtn" name="noOfRows"> 
+            <option value='3'>3</option>
+            <option value="5">5</option>
+            <option value="7">7</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+        </select>
+    </div>
+    <!------------------ The Expense and Income list Div -------------------------->
     <div class="ul-div">
         <ul class="expenseList">
             <h3 style="color: #fd5454;" class="ul-h">EXPENSE</h3>

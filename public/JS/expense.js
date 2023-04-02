@@ -6,6 +6,7 @@ const ulDiv = document.querySelector('.ul-div')
 const expenseList = document.querySelector('.expenseList')
 const incomeList = document.querySelector('.incomeList')
 const prompt = document.querySelector('.prompt')
+const noOfRows = document.getElementById('rowNoSelectorBtn')
 
 
 form.addEventListener('submit',addExpenseOrincome);
@@ -176,7 +177,10 @@ async function loadExpensesAndIncome(e){
         let page = 1
         // getting all expenses from database of user logged for current page(using JWT)
         let token = localStorage.getItem('token')
-        let response = await axios.get(`http://localhost:3000/expense/all_expenses?page=${page}`,{ headers:{ 'Authorization': token }})
+        let response = await axios.get(`http://localhost:3000/expense/all_expenses?page=${page}`,{ 
+            headers:{ 'Authorization': token },
+            params:{noOfrows:localStorage.getItem('noOfRows')}
+            })
         let expensesArray = response.data.expenses
         showListOnDOM(expensesArray,expenseList)
         //---------handaling pagination buttons------------------//
@@ -184,7 +188,10 @@ async function loadExpensesAndIncome(e){
 
         //--------now loading all incomes-----------------//
         // getting all income from database of user logged(using JWT)
-        let incResponse = await axios.get(`http://localhost:3000/income/all_income?page=${page}`,{ headers:{ 'Authorization': token }})
+        let incResponse = await axios.get(`http://localhost:3000/income/all_income?page=${page}`,{ 
+            headers:{ 'Authorization': token },
+            params:{noOfrows:localStorage.getItem('noOfRows')}
+        })
         let incomeArray = incResponse.data.incomes
         showListOnDOM(incomeArray,incomeList)
         //------- handling pagination buttons------------//
@@ -198,7 +205,10 @@ async function loadExpensesAndIncome(e){
 async function getExpensesAndShow(page){
     try{
         let token = localStorage.getItem('token')
-        let response = await axios.get(`http://localhost:3000/expense/all_expenses?page=${page}`,{ headers:{ 'Authorization': token }})
+        let response = await axios.get(`http://localhost:3000/expense/all_expenses?page=${page}`,{ 
+            headers:{ 'Authorization': token },
+            params:{noOfrows:localStorage.getItem('noOfRows')}
+        })
         let expensesArray = response.data.expenses
         showListOnDOM(expensesArray,expenseList)
         paginate(response,'expensePageBtns')
@@ -211,7 +221,10 @@ async function getExpensesAndShow(page){
 async function getIncomeAndShow(page){
     try{
         let token = localStorage.getItem('token')
-        let response = await axios.get(`http://localhost:3000/income/all_income?page=${page}`,{ headers:{ 'Authorization': token }})
+        let response = await axios.get(`http://localhost:3000/income/all_income?page=${page}`,{ 
+            headers:{ 'Authorization': token },
+            params:{noOfrows:localStorage.getItem('noOfRows')}
+        })
         let incomesArray = response.data.incomes
         showListOnDOM(incomesArray,incomeList)
         paginate(response,'incomePageBtns')
@@ -396,4 +409,9 @@ function makeLeaderboardLi(name,totalExpense){
 const AllExpBtn = document.getElementById('allExpenseButton')
 AllExpBtn.addEventListener('click',(e)=>{
     window.location.href = 'http://localhost:3000/premium/getAllExpensePage'
+})
+
+//----saving no of rows per page in local storage-------------//
+noOfRows.addEventListener('change',(e)=>{
+    localStorage.setItem('noOfRows',noOfRows.value)
 })
