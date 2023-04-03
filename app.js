@@ -1,8 +1,15 @@
 require('dotenv').config()
 
-const path = require('path');
+const helmet = require('helmet')   // for secure headers
 
-const bodyParser = require('body-parser')
+const compression = require('compression') // for compressing 
+
+const morgan = require('morgan')  // for logging 
+
+const path = require('path');
+const fs = require('fs')
+
+const bodyParser = require('body-parser')  // to parse data chunks
 
 const express = require('express');
 const app = express();
@@ -23,6 +30,17 @@ const ForgotPasswordRequest = require('./model/ForgotPasswordRequest')
 const Income = require('./model/income');
 const FileUrl = require('./model/fileUrl');
 
+// using 'helmet' for secure headers and also allowing axios, razorpay
+app.use(helmet());
+//using compression to compress response files
+// app.use(compression());
+// using morgan to log activities
+   // first making the stream to log file
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname,'access.log'),
+    {flags:'a'}    // this will append
+    )
+app.use(morgan('combined',{stream:accessLogStream}));
 // making public static
 app.use(express.static(path.join(__dirname,'public')));
 // adding body parser
@@ -63,5 +81,5 @@ FileUrl.belongsTo(User);
 
 sequelize.sync();
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
 
