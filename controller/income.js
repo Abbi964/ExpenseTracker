@@ -94,5 +94,5 @@ exports.deleteIncome = async(req,res,next)=>{
 }
 
 function tokenToData(token){
-    return jwt.verify(token,'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex')
+    return jwt.verify(token,process.env.JWT_KEY)
 }

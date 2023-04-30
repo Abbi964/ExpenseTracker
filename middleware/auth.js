@@ -8,7 +8,7 @@ exports.authenticate = async(req,res,next)=>{
     try{
         let token = req.headers.authorization
         // getting userId from token
-        let data = jwt.verify(token,'98ab45fa145srv78ftrh8fth458sd45at7012awfgnmoyex');
+        let data = jwt.verify(token,process.env.JWT_KEY);
         let userId = data.userId;
         // finding user using userId
         let user = await User.findByPk(userId);

@@ -86,3 +86,6 @@
 ::ffff:127.0.0.1 - - [03/Apr/2023:05:48:59 +0000] "GET /user/ispremium HTTP/1.1" 304 - "http://localhost:3000/expense/main" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
 ::ffff:127.0.0.1 - - [03/Apr/2023:05:48:59 +0000] "GET /expense/all_expenses?page=1&noOfrows=3 HTTP/1.1" 304 - "http://localhost:3000/expense/main" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
 ::ffff:127.0.0.1 - - [03/Apr/2023:05:48:59 +0000] "GET /income/all_income?page=1&noOfrows=3 HTTP/1.1" 304 - "http://localhost:3000/expense/main" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
+::ffff:127.0.0.1 - - [03/Apr/2023:07:09:16 +0000] "GET /expense/main HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
+::ffff:127.0.0.1 - - [03/Apr/2023:07:09:16 +0000] "GET /CSS/expense.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
+::ffff:127.0.0.1 - - [03/Apr/2023:07:09:16 +0000] "GET /JS/expense.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
