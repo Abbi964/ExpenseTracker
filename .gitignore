@@ -6,3 +6,5 @@ node_modules
 
 #ignore a ts file which i used to solve an error in sendinblue emailserviceprovider
 sib-api-v3-sdk.d.ts
+
+access.log
