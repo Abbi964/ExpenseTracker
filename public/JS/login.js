@@ -24,7 +24,7 @@ async function SubmitForm(e){
             // saving the json web token in local storage
             localStorage.setItem('token',response.data.token)
             // also saving noOfRows in localstorage 
-            localStorage.setItem('nowofRows','3')
+            localStorage.setItem('nowOfRows','3')
             window.location.href = '/expense/main'
         }
         catch(err){
