@@ -30,10 +30,6 @@ const ForgotPasswordRequest = require('./model/ForgotPasswordRequest')
 const Income = require('./model/income');
 const FileUrl = require('./model/fileUrl');
 
-// using 'helmet' for secure headers and also allowing axios, razorpay
-// app.use(helmet());
-//using compression to compress response files
-// app.use(compression());
 // using morgan to log activities
    // first making the stream to log file
 const accessLogStream = fs.createWriteStream(
