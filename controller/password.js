@@ -58,7 +58,7 @@ exports.postForgotPassword = async(req,res,next)=>{
             sender,
             to: receivers,
             subject: 'Reset your password',
-            htmlcontent: `<p>To reset your password<a href="http://13.49.229.70:3000/password/resetPassword/${id}" > click here</a></p>`
+            htmlcontent: `<p>To reset your password<a href="http://13.49.221.73:3000/password/resetPassword/${id}" > click here</a></p>`
         },
         {transaction:t})
         await t.commit()
