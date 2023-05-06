@@ -19,7 +19,7 @@ async function resetPassword(e){
             let result = await axios.post(window.location.href,obj)
             // redirecting to login page
             alert('password has been reset successfully')
-            window.location.href = `http://${process.env.EC2_HOSTNAME}:3000/user/login`
+            window.location.href = `http://13.48.86.241:3000/user/login`
         }
         catch(err){
             console.log(err)

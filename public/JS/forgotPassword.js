@@ -14,7 +14,7 @@ async function submit(e){
     else{
         try{
             let obj = {email:emailInput.value}
-            let result = await axios.post(`http://${process.env.EC2_HOSTNAME}:3000/password/forgotPassword`,obj);
+            let result = await axios.post(`http://13.48.86.241:3000/password/forgotPassword`,obj);
             Info.innerHTML = `<p>${result.data.msg}</p>`
             
         }
