@@ -30,6 +30,9 @@ const ForgotPasswordRequest = require('./model/ForgotPasswordRequest')
 const Income = require('./model/income');
 const FileUrl = require('./model/fileUrl');
 
+// Enable CORS for all routes
+app.use(cors());
+
 // using morgan to log activities
    // first making the stream to log file
 const accessLogStream = fs.createWriteStream(
