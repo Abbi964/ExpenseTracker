@@ -6,6 +6,8 @@ const compression = require('compression') // for compressing
 
 const morgan = require('morgan')  // for logging 
 
+const cors = require('cors')
+
 const path = require('path');
 const fs = require('fs')
 
