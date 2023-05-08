@@ -14,7 +14,7 @@ async function submit(e){
     else{
         try{
             let obj = {email:emailInput.value}
-            let result = await axios.post(`http://16.16.123.36:3000/password/forgotPassword`,obj);
+            let result = await axios.post(`http://16.16.149.37:3000/password/forgotPassword`,obj);
             Info.innerHTML = `<p>${result.data.msg}</p>`
             
         }

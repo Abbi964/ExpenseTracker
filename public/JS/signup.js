@@ -18,7 +18,7 @@ async function SubmitForm(e){
             // making an obj with input values
             let obj = {name:nameInput.value, email:emailInput.value, password:passwordInput.value}
             // posting obj to database
-            let response = await axios.post(`http://16.16.123.36:3000/user/signup`,obj);
+            let response = await axios.post(`http://16.16.149.37:3000/user/signup`,obj);
             if(response.data===false){
                 signUpInfo.innerHTML = '<p>User with this email already exists</p>'
             }
