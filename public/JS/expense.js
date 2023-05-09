@@ -35,12 +35,12 @@ async function addExpenseOrincome(e){
             let response;
             let li;
             if(expenseOrIncome==='expense'){
-                response = await axios.post(`http://16.16.149.37:3000/expense/addexpense`,expOrIncInfo);
+                response = await axios.post(`http://13.48.23.186:3000/expense/addexpense`,expOrIncInfo);
                 // making an list item
                 li = makeLi(response.data, amount.value, category.value, description.value,'listItemExp');
             }
             else{
-                response = await axios.post(`http://16.16.149.37:3000/income/addincome`,expOrIncInfo);
+                response = await axios.post(`http://13.48.23.186:3000/income/addincome`,expOrIncInfo);
                 // making an list item
                 li = makeLi(response.data, amount.value, category.value, description.value,'listItemInc');
             }
@@ -80,7 +80,7 @@ buyPremium.addEventListener('click',activatePremium);
 
 async function activatePremium(e){
     let token = localStorage.getItem('token')
-    let response = await axios.get(`http://16.16.149.37:3000/order/purchasePremium`,{headers:{'Authorization':token}})
+    let response = await axios.get(`http://13.48.23.186:3000/order/purchasePremium`,{headers:{'Authorization':token}})
     // making an object to pass as option in new razorpay obj which will be made
     let options = {
         "key":response.data.key_id,
@@ -88,7 +88,7 @@ async function activatePremium(e){
         "handler": async function(respo){
             // handeler is CB fn which will be called by razorpay when payment will be successful
             console.log(respo)
-            await axios.post(`http://16.16.149.37:3000/order/updateTransectionStatus`,{
+            await axios.post(`http://13.48.23.186:3000/order/updateTransectionStatus`,{
                 order_id: options.order_id,
                 payment_id: respo.razorpay_payment_id,
             },
@@ -98,7 +98,7 @@ async function activatePremium(e){
             //removing the buy Premium button and replace it something else
             changeBuyPremium();
             // changing isPremium = true in JWT stored in local storage 
-            let res = await axios.get(`http://16.16.149.37:3000/user/makePremiumInLocalStorage`,{
+            let res = await axios.get(`http://13.48.23.186:3000/user/makePremiumInLocalStorage`,{
                 headers:{'Authorization': token}
             })
             let newToken = res.data.token
@@ -115,7 +115,7 @@ async function activatePremium(e){
         console.log(res)
         alert('something went wrong')
         // writing is info in database
-        axios.post(`http://16.16.149.37:3000/order/transectionFalied`,{order_id:options.order_id},{headers:{'Authorization': token}})
+        axios.post(`http://13.48.23.186:3000/order/transectionFalied`,{order_id:options.order_id},{headers:{'Authorization': token}})
     })
 }
 
@@ -131,7 +131,7 @@ async function modifyExpense(e){
                 // deleting expense from database
                 let li_id = e.target.parentElement.id;
                 let token = localStorage.getItem('token')
-                let response = await axios.delete(`http://16.16.149.37:3000/expense/delete/${li_id}`,{
+                let response = await axios.delete(`http://13.48.23.186:3000/expense/delete/${li_id}`,{
                     headers:{'Authorization':token}
                 })
                 // deleting from DOM
@@ -150,7 +150,7 @@ async function modifyExpense(e){
                 // deleting income from database
                 let li_id = e.target.parentElement.id;
                 let token = localStorage.getItem('token')
-                let response = await axios.delete(`http://16.16.149.37:3000/income/delete/${li_id}`,{
+                let response = await axios.delete(`http://13.48.23.186:3000/income/delete/${li_id}`,{
                     headers:{'Authorization':token}
                 })
                 // deleting from DOM
@@ -177,7 +177,7 @@ async function loadExpensesAndIncome(e){
         let page = 1
         // getting all expenses from database of user logged for current page(using JWT)
         let token = localStorage.getItem('token')
-        let response = await axios.get(`http://16.16.149.37:3000/expense/all_expenses?page=${page}`,{ 
+        let response = await axios.get(`http://13.48.23.186:3000/expense/all_expenses?page=${page}`,{ 
             headers:{ 'Authorization': token },
             params:{noOfrows:localStorage.getItem('noOfRows')}
             })
@@ -188,7 +188,7 @@ async function loadExpensesAndIncome(e){
 
         //--------now loading all incomes-----------------//
         // getting all income from database of user logged(using JWT)
-        let incResponse = await axios.get(`http://16.16.149.37:3000/income/all_income?page=${page}`,{ 
+        let incResponse = await axios.get(`http://13.48.23.186:3000/income/all_income?page=${page}`,{ 
             headers:{ 'Authorization': token },
             params:{noOfrows:localStorage.getItem('noOfRows')}
         })
@@ -205,7 +205,7 @@ async function loadExpensesAndIncome(e){
 async function getExpensesAndShow(page){
     try{
         let token = localStorage.getItem('token')
-        let response = await axios.get(`http://16.16.149.37:3000/expense/all_expenses?page=${page}`,{ 
+        let response = await axios.get(`http://13.48.23.186:3000/expense/all_expenses?page=${page}`,{ 
             headers:{ 'Authorization': token },
             params:{noOfrows:localStorage.getItem('noOfRows')}
         })
@@ -221,7 +221,7 @@ async function getExpensesAndShow(page){
 async function getIncomeAndShow(page){
     try{
         let token = localStorage.getItem('token')
-        let response = await axios.get(`http://16.16.149.37:3000/income/all_income?page=${page}`,{ 
+        let response = await axios.get(`http://13.48.23.186:3000/income/all_income?page=${page}`,{ 
             headers:{ 'Authorization': token },
             params:{noOfrows:localStorage.getItem('noOfRows')}
         })
@@ -339,7 +339,7 @@ function clearPagination(btnLiId){
 
 function addToTotalExpense(amount){
     let token = localStorage.getItem('token')
-    axios.post(`http://16.16.149.37:3000/user/addToTotalExpense`,{
+    axios.post(`http://13.48.23.186:3000/user/addToTotalExpense`,{
         amount:amount,
         token:token,
     })
@@ -347,7 +347,7 @@ function addToTotalExpense(amount){
 
 function addToTotalIncome(amount){
     let token = localStorage.getItem('token')
-    axios.post(`http://16.16.149.37:3000/user/addToTotalIncome`,{
+    axios.post(`http://13.48.23.186:3000/user/addToTotalIncome`,{
         amount:amount,
         token:token,
     })
@@ -374,7 +374,7 @@ function changeBuyPremium(){
 
 async function checkingAndapplyingPremium(){
     let token = localStorage.getItem('token')
-    let result = await axios.get(`http://16.16.149.37:3000/user/ispremium`,{headers:{
+    let result = await axios.get(`http://13.48.23.186:3000/user/ispremium`,{headers:{
         'Authorization':token
     }})
     if(result.data.isPremiumUser){
@@ -387,7 +387,7 @@ async function checkingAndapplyingPremium(){
 async function showLeaderboard(e){
     const leaderboardUl = document.querySelector('#leaderboard')
     leaderboardUl.className = 'leaderboard'
-    let response = await axios.get(`http://16.16.149.37:3000/premium/getLeaderboard`)
+    let response = await axios.get(`http://13.48.23.186:3000/premium/getLeaderboard`)
     let leaderboardArray = response.data.leaderboardArray
     // showing leaderboardArray on DOM
     leaderboardUl.innerHTML = '<h2>LeaderBoard :</h2>'
@@ -408,7 +408,7 @@ function makeLeaderboardLi(name,totalExpense){
 //---------All Expense button---------------------------//
 const AllExpBtn = document.getElementById('allExpenseButton')
 AllExpBtn.addEventListener('click',(e)=>{
-    window.location.href = `http://16.16.149.37:3000/premium/getAllExpensePage`
+    window.location.href = `http://13.48.23.186:3000/premium/getAllExpensePage`
 })
 
 //----saving no of rows per page in local storage-------------//
