@@ -1,6 +1,7 @@
 const table = document.getElementById('table');
 const downloadBtn = document.getElementById('download');
 const downloadedFilesUl = document.getElementById('downloadedFiles');
+const warning = document.getElementById('warning')
 
 
 window.addEventListener('DOMContentLoaded',loadTableAndFileUrls)
@@ -40,6 +41,7 @@ async function loadTableAndFileUrls(e){
 
     }
     catch(err){
+        warning.innerText = 'You are not a Premium User'
         console.log(err)
     }
     
