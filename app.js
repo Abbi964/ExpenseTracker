@@ -59,6 +59,8 @@ app.use('/premium',premiumRoutes);
 app.use('/password',passwordRoutes);
 app.use('/income',incomeRoutes);
 
+// adding a message for testing for jenkins auto pull 
+
 
 // defining relation between user and expense
 User.hasMany(Expense);
