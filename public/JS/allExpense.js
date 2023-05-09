@@ -41,7 +41,7 @@ async function loadTableAndFileUrls(e){
 
     }
     catch(err){
-        warning.innerText = 'You are not a Premium User'
+        warning.textContent = 'You are not a Premium User'
         console.log(err)
     }
     
