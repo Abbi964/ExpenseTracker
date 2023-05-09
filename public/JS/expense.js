@@ -49,9 +49,9 @@ async function addExpenseOrincome(e){
             // appending a delete btn
             let delBtn = makeDelBtn();
             li.appendChild(delBtn)
-            //appending edit button
-            let editBtn = makeEditBtn();
-            li.appendChild(editBtn)
+            // //appending edit button
+            // let editBtn = makeEditBtn();
+            // li.appendChild(editBtn)
             //appending li to ul
             if(expenseOrIncome==='expense'){
                 expenseList.appendChild(li);
@@ -293,9 +293,9 @@ function showListOnDOM(array,list){
         // appending a delete button
         let delBtn = makeDelBtn();
         li.appendChild(delBtn);
-        // appending an edit button
-        let editBtn = makeEditBtn(); 
-        li.appendChild(editBtn)
+        // // appending an edit button
+        // let editBtn = makeEditBtn(); 
+        // li.appendChild(editBtn)
         //appending to ul
         list.appendChild(li)
     })
