@@ -41,6 +41,7 @@ async function loadTableAndFileUrls(e){
 
     }
     catch(err){
+        warning.textContent = 'some error occurd'
         console.log(err)
     }
     
