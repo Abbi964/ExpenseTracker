@@ -408,7 +408,8 @@ function makeLeaderboardLi(name,totalExpense){
 //---------All Expense button---------------------------//
 const AllExpBtn = document.getElementById('allExpenseButton')
 AllExpBtn.addEventListener('click',(e)=>{
-    window.location.href = `http://13.50.99.26:3000/premium/getAllExpensePage`
+    let token = localStorage.getItem('token')
+    window.location.href = `http://13.50.99.26:3000/premium/getAllExpensePage?token=${token}`
 })
 
 //----saving no of rows per page in local storage-------------//

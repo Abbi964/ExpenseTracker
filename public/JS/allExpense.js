@@ -10,7 +10,8 @@ async function loadTableAndFileUrls(e){
     try{
         //-------loading table ------------------------//
 
-        let token = localStorage.getItem('token')
+        let urlParams = new URLSearchParams(window.location.search);
+        let token = urlParams.get('token');
         let result = await axios.get(`http://13.50.99.26:3000/premium/getAllExpenses`,{ headers:{ 'Authorization': token }})
         let count = 0
         // first appending all incomes to table
@@ -53,7 +54,8 @@ downloadBtn.addEventListener('click',download);
 
 async function download(e){
     try{
-        let token = localStorage.getItem('token')
+        let urlParams = new URLSearchParams(window.location.search);
+        let token = urlParams.get('token');
         let result = await axios.get(`http://13.50.99.26:3000/user/download`,{headers:{ 'Authorization': token }})
          //saving fileUrl in DB
          let response = await axios.post(`http://13.50.99.26:3000/user/saveFileUrl`,{fileUrl:result.data.fileUrl},{headers:{ 'Authorization': token }})
