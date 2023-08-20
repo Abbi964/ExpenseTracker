@@ -4,7 +4,7 @@ const helmet = require('helmet')   // for secure headers
 
 const compression = require('compression') // for compressing 
 
-const morgan = require('morgan')  // for logging 
+// const morgan = require('morgan')  // for logging 
 
 const path = require('path');
 const fs = require('fs')
@@ -36,11 +36,11 @@ app.use(helmet());
 // app.use(compression());
 // using morgan to log activities
    // first making the stream to log file
-const accessLogStream = fs.createWriteStream(
-    path.join(__dirname,'access.log'),
-    {flags:'a'}    // this will append
-    )
-app.use(morgan('combined',{stream:accessLogStream}));
+// const accessLogStream = fs.createWriteStream(
+//     path.join(__dirname,'access.log'),
+//     {flags:'a'}    // this will append
+//     )
+// app.use(morgan('combined',{stream:accessLogStream}));
 // making public static
 app.use(express.static(path.join(__dirname,'public')));
 // adding body parser
