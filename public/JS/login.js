@@ -18,7 +18,7 @@ async function SubmitForm(e){
             // making an obj containing login info
             let obj = {email:emailInput.value, password:passwordInput.value};
             // making a post request
-            let response = await axios.post(`http://13.49.68.137:3000/user/login`,obj);
+            let response = await axios.post(`http://13.48.47.63:3000/user/login`,obj);
             // going to main page if we get a response
             alert(response.data.msg)
             // saving the json web token in local storage
